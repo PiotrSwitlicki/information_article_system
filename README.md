@@ -1,4 +1,26 @@
-jest to zalecane, gdyż może spowodować błędy w aplikacji):
+# Projekt systemu artykułów informacyjnych
+
+## Opis
+Projekt ten jest prostym systemem artykułów informacyjnych, który umożliwia dodawanie, edycję oraz przeglądanie artykułów. System wykorzystuje framework Laravel do backendu oraz HTML formularze do interakcji z użytkownikiem.
+
+## Wymagania
+Wymagana jest wersja php conajmniej 8.1
+
+## Konfiguracja środowiska dla systemu Windows
+1. Jeśli nie masz zainstalowanych narzędzi dla gita "git for Windows", to pobierz je ze strony "https://gitforwindows.org/". Zainstaluj je. Kliknij w wybranym przez siebie folderze,w którym chcesz zapisać repozytorium, w pustym miejscu prawym przyciskiem myszy i wybierz pozycję "Git Bash Here". Następnie w konsoli wpisz:
+    ```
+    git clone https://github.com/PiotrSwitlicki/information_article_system
+    ```
+2. Przejdź w eskploratorze do katalogu projektu "information_article_system". Następnie w pustym miejscu, żeby nie trafić w jakiś plik czy folder, kliknąć prawym przyciskiem myszy, przytrzymując jednocześnie klawisz shift i następnie z menu wybrać "Otwórz tutaj okno programu PowerShell".
+
+3. Zainstaluj wszystkie zależności PHP za pomocą Composer wpisując w otwartej wcześniej konsoli i zaktualizuj samego composera do najnowszej wersji:
+    ```
+    composer self-update
+    ```	 
+    ```
+    composer install 
+    ```
+Jeśli w powyższym wyjdą niepasujące zależności można też spróbować polecenia (ale nie jest to zalecane, gdyż może spowodować błędy w aplikacji):
 
     ```
     composer install --ignore-platform-reqs
