@@ -33,6 +33,16 @@ class AuthorController extends Controller
             'last_name.required' => 'Pole nazwisko jest wymagane.',
         ]);
 
+        // Sprawdzenie czy autor o podanej kombinacji imienia i nazwiska już istnieje
+        $existingAuthor = Author::where('first_name', $request->first_name)
+                                ->where('last_name', $request->last_name)
+                                ->first();
+        //Wyświetlenie komunikatu, że autor jest już w bazie
+        if ($existingAuthor != null) {
+            return redirect()->back()->with('error', 'Autor o podanej kombinacji imienia i nazwiska już istnieje.');
+        }
+
+        // Jeśli autor nie istnieje, dodajemy go do bazy danych
         $author = new Author();
         $author->first_name = $request->first_name;
         $author->last_name = $request->last_name;

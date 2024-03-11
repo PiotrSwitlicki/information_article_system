@@ -14,7 +14,6 @@ class ArticleController extends Controller
 
     /**
      * Konstruktor wstrzykujący ArticleService do kontrolera
-     *
      * @param ArticleService $articleService Instancja ArticleService
      */
 
@@ -25,7 +24,6 @@ class ArticleController extends Controller
 
     /**
      * Wyświetlanie listy artykułów.
-     *
      * @return \Illuminate\View\View Widok artykułów
      */
 
@@ -38,7 +36,6 @@ class ArticleController extends Controller
 
     /**
      * Wyświetlanie określonego artykułu.
-     *
      * @param  int  $id ID artykułu
      * @return \Illuminate\View\View Widok szczegółowy artykułu
      */
@@ -46,12 +43,11 @@ class ArticleController extends Controller
     public function show($id)
     {
         // Pobranie artykułu po ID za pomocą ArticleService
-        $article = $this->articleService->getArticleById($id);
+        $article = $this->articleService->getArticle($id);
         return view('articles.show', compact('article'));
     }
     /**
      * Wyświetlanie formularza tworzenia nowego artykułu.
-     *
      * @return \Illuminate\View\View Widok formularza tworzenia artykułu
      */
     public function create()
@@ -62,7 +58,6 @@ class ArticleController extends Controller
     }
     /**
      * Zapis nowego artykułu do bazy danych.
-     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse Przekierowanie na stronę główną z wiadomością o sukcesie
      */
@@ -76,7 +71,7 @@ class ArticleController extends Controller
     //Edycja artykułu
     public function edit($id)
     {
-        $article = $this->articleService->getArticleById($id);
+        $article = $this->articleService->getArticle($id);
         return view('articles.edit', compact('article'));
     }
     //Aktualizac danych w bazie

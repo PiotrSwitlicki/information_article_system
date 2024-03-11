@@ -13,6 +13,16 @@
                             <div class="form-group">
                                 <div class="carda-header">Dodaj nowego autora</div>
                                 <br>
+                                @if(session('success'))
+                                    <div class="alert alert-success" role="alert">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
+                                @if(session('error'))
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
                                 <label for="first_name">Imię:</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name">
                                 @error('first_name')
