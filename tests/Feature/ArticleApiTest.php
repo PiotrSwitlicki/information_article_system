@@ -13,6 +13,15 @@ class ArticleApiTest extends TestCase
 {
     use DatabaseTransactions;
 
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        // Tworzenie przykładowych danych w bazie danych testowej
+        Article::factory()->count(30)->create();
+        Author::factory()->count(30)->create();
+    }
+
     /** @test */
     public function it_returns_single_article()
     {
@@ -44,6 +53,8 @@ class ArticleApiTest extends TestCase
     /** @test */
     public function it_returns_top_authors_last_week()
     {
+        Author::factory()->count(30)->create();
+        Article::factory()->count(30)->create();
         $response = $this->get('/top-authors');
         $response->assertStatus(200)
             ->assertJsonCount(3); 

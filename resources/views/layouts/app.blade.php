@@ -8,6 +8,7 @@
   border-radius: 10px;
   border: 3px solid #e6e6e6;
   box-shadow: 0 70px 40px -20px rgba(0, 0, 0, 0.2);
+  background: white;
   transition: 0.4s ease-in-out transform;
 
   &:hover {
@@ -29,7 +30,30 @@
     transform: translate3d(0px, 0px, -250px);
   }
 }
+
+@keyframes move-it {
+  0% {
+    background-position: initial;
+  }
+  100% {
+    background-position: 100px 0px;
+  }
+}
+
+body {  
+  background: repeating-linear-gradient(
+  45deg,
+  #ffffff,
+  #fff2cc 25%,
+  #464 15%,
+  #100 10%
+);
+  background-size: 100px 100px;
+  animation: move-it 5s linear infinite;
+}
+
 </style>
+
 
 
 <!DOCTYPE html>
@@ -43,6 +67,7 @@
     <!-- Additional CSS styles can be included here -->
 </head>
 <body>
+    <div class="content">
     <header>
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -65,9 +90,9 @@
         </nav>
     </header>
 
-    <main role="main">
+    <main role="main" class="main">
         <!-- Main content -->
-        <div class="container mt-4">
+        <div class="container-mt-4">
             @yield('content')
         </div>
     </main>
@@ -77,7 +102,7 @@
             <span class="text-muted">© 2024 Information Article System. All rights reserved.</span>
         </div>
     </footer>
-
+    </div>
     <!-- Include Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
@@ -85,3 +110,8 @@
     <!-- Additional JS scripts can be included here -->
 </body>
 </html>
+
+
+
+
+

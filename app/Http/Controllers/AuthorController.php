@@ -4,56 +4,46 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Author;
+use Illuminate\View\View;
 
 class AuthorController extends Controller
 {
-    // Metoda do pobierania wszystkich autorów
-    public function getAllAuthors()
+    protected $author;
+
+    public function __construct(Author $author)
     {
-        $authors = Author::all();
+        $this->author = $author;
+    }
+
+    // Metoda do pobierania wszystkich autorów
+    public function index()
+    {
+        $authors = $this->author->all();
         return response()->json($authors);
     }
 
     // Metoda do dodawania nowego autora
-    public function addAuthor(Request $request)
-    {
-        // Walidacja danych wejściowych
-        $request->validate([
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-        ]);
-
-        // Utworzenie nowego autora
-        $author = new Author([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-        ]);
-        $author->save();
-
-        return response()->json('Author created successfully');
-    }
-
-    public function create()
-    {
-        return view('authors.create');
-    }
-
     public function store(Request $request)
     {
-        // Walidacja danych wejściowych
         $validatedData = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
+        ], [
+            'first_name.required' => 'Pole imię jest wymagane.',
+            'last_name.required' => 'Pole nazwisko jest wymagane.',
         ]);
 
-        // Utworzenie nowego autora
         $author = new Author();
         $author->first_name = $request->first_name;
         $author->last_name = $request->last_name;
         $author->save();
 
-        // Przekierowanie użytkownika po dodaniu autora
         return redirect()->route('authors.create')->with('success', 'Autor dodany pomyślnie.');
     }
 
+    // Metoda do wyświetlania formularza dodawania autora
+    public function create()
+    {
+        return view('authors.create');
+    }
 }

@@ -48,9 +48,15 @@ Jeśli w powyższym wyjdą niepasujące zależności można też spróbować pol
 4. Interfejs użytkownika umożliwia dodawanie nowych artykułów oraz edycję istniejących. Możesz również przeglądać artykuły i dodawać autorów. Można także utworzyć nowy artykuł dodając przy tym jednocześnie nowego autora. W tym celu należy kliknąć w menu górnym "Dodaj artykuł", a następnie z listy "Autorzy:" wybrać ostatnią pozycję "Dodaj nowego autora". Można także do artykułu przydzielić kilku autorów przytrzymując przyciśnięty przycisk myszy i przeciągając lub przytrzymując klawisz ctrl i klikając na odpowiednie pozycje z listy. 
 
 5. Można wykonać seedy z danymi z fakera do bazy danych 
+    ```
    php artisan db:seed --class=AuthorSeeder
+    ```
+    ```
    php artisan db:seed --class=ArticleSeeder
+    ```
+    ```
    php artisan db:seed --class=ArticleAuthorSeeder
+    ```
 
 6. Endpointy API do przetestowania np. w Postmanie albo po prostu do wstawienia w pasek adresu przeglądarki. Zamiast nawiasów klamrowych z ich zawartością należy wpisać liczbę. 
 Najlepsi autorzy:
@@ -60,12 +66,16 @@ http://localhost/information_article_system/public/articles/API/{authorId}
 Do pobierania artykułu według identyfikatora
 http://localhost/information_article_system/public/article/{id}
 
-7. Testy. Przygotowane zostały metody testujące endpointy API. Aby je wywołać, użyj polecenia:
+7. Testy. Przygotowane zostały testy funkcjonalne dla endpointów API oraz testy jednostkowe dla kontrolera ArticleControler. Aby je wywołać, użyj polecenia:
 
     ```
      php artisan test
     ```
 8. Routingi w aplikacji zostały podzielone na dwie grupy. 
+
+9. W kontrolerach ArticleController i AuthorController zastosowano wzorzec projektowy Dependency Injection 
+
+10. Pola formularzy są walidowane na wypadku braku wypełnienia, któregoś z nich. 
 
 ## Kontakt
 W przypadku jakichkolwiek pytań lub problemów, skontaktuj się ze mną pod adresem piotrswitlicki2@gmail.com

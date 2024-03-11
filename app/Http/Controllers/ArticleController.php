@@ -10,10 +10,18 @@ use Illuminate\View\View;
 
 class ArticleController extends Controller
 {
+    protected $article;
+    protected $author;
+
+    public function __construct(Article $article, Author $author)
+    {
+        $this->article = $article;
+        $this->author = $author;
+    }
 
     public function index()
     {
-        $articles = Article::with('authors')->get();
+        $articles = $this->article->with('authors')->get();
         return view('articles', compact('articles'));
     }
     
@@ -24,18 +32,15 @@ class ArticleController extends Controller
 
     public function create()
     {
-        $authors = Author::all();
+        $authors = $this->author->all();
         return view('articles.create', ['authors' => $authors]);
     }
 
     public function store(Request $request)
     {
-
-        //dd($request);
         $lastInsertedId = null;
 
-        if($request->authors[0] == "new")
-        {
+        if ($request->has('authors') && $request->authors[0] == "new") {
             $author = new Author();
             $author->first_name = $request->new_author_first_name;
             $author->last_name = $request->new_author_last_name;
@@ -43,20 +48,25 @@ class ArticleController extends Controller
             $lastInsertedId = $author->id;
         }
 
-        // Walidacja danych wejściowych
         $validatedData = $request->validate([
             'title' => 'required|max:255',
             'content' => 'required',
             'authors' => 'required|array',
         ]);
 
-        // Utwórzenie nowego artykułu
+        if (empty($validatedData['title'])) {
+            return redirect()->back()->withErrors(['title' => 'Pole tytułu jest wymagane.'])->withInput();
+        }
+
+        if (empty($validatedData['content'])) {
+            return redirect()->back()->withErrors(['content' => 'Pole treści jest wymagane.'])->withInput();
+        }
+
         $article = new Article();
-        $article->title = $request->title;
-        $article->content = $request->content;
+        $article->title = $validatedData['title'];
+        $article->content = $validatedData['content'];
         $article->save();
 
-        // Sprawdzenie, czy wybrano autorów i przypisz ich do artykułu
         if ($lastInsertedId == null) {
             if ($request->has('authors')) {
                 $article->authors()->attach($request->input('authors'));
@@ -70,10 +80,8 @@ class ArticleController extends Controller
             ]);            
         }
 
-        // Przekierowywanie użytkownika do zapisania artykułu
         return redirect()->route('articles.index')->with('success', 'Article created successfully.');
     }
-
     public function edit(Article $article)
     {
         return view('articles.edit', compact('article'));
@@ -81,34 +89,31 @@ class ArticleController extends Controller
 
     public function update(Request $request, $id)
     {
-        $article = Article::findOrFail($id);
+        $article = $this->article->findOrFail($id);
         $article->title = $request->input('title');
         $article->content = $request->input('content');
         $article->save();
 
-        return redirect()->route('articles.index')->with('success', 'Zmiany zostały zapisane.');
+        return redirect()->route('articles.index')->with('success', 'Changes have been saved.');
     }
 
-    // Metoda do pobierania artykułu według identyfikatora
     public function getArticle($id)
     {
-        $article = Article::findOrFail($id);
+        $article = $this->article->findOrFail($id);
         return response()->json($article);
     }
 
-    // Metoda do pobierania wszystkich artykułów danego autora
     public function getArticlesByAuthor($authorId)
     {
-        $articles = Article::whereHas('authors', function ($query) use ($authorId) {
+        $articles = $this->article->whereHas('authors', function ($query) use ($authorId) {
             $query->where('authors.id', $authorId);
         })->get();
         return response()->json($articles);
     }
 
-    // Metoda do pobierania 3 najlepszych autorów z ostatniego tygodnia
     public function getTopAuthorsLastWeek()
     {
-        $topAuthors = Author::withCount('articles')
+        $topAuthors = $this->author->withCount('articles')
             ->whereHas('articles', function ($query) {
                 $query->whereBetween('articles.created_at', [now()->startOfWeek(), now()]);
             })
@@ -118,4 +123,5 @@ class ArticleController extends Controller
 
         return response()->json($topAuthors);
     }
+
 }

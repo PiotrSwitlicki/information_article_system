@@ -6,18 +6,24 @@
             <div class="col-md-8">
                 <div class="card1">
                     <div class="card-body">
-                        <div class="card-header">Dodaj artykuł</div><br>
+                        <div class="carda-header">Dodaj artykuł</div><br>
                         <form method="POST" action="{{ route('articles.store') }}">
                             @csrf
 
                             <div class="form-group">
+                            
                                 <label for="title">Tytuł:</label>
                                 <input type="text" class="form-control" id="title" name="title">
-                            </div>
-
+                            @error('title')    
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                            </div>                            
                             <div class="form-group">
                                 <label for="content">Treść:</label>
                                 <textarea class="form-control" id="content" name="content"></textarea>
+                            @error('content')  
+                                <div class="text-danger">{{ $message }}</div>  
+                            @enderror
                             </div>
 
                             <div class="form-group">
