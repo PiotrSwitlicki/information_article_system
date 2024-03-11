@@ -44,17 +44,12 @@ class ArticleService
     }
 
     /**
-     * Tworzy lub aktualizuje artykuł.
-     * @param array $data Dane artykułu
-     * @param int|null $id ID artykułu do aktualizacji (opcjonalne)
-     * @throws \Exception Wyjątek w przypadku nieprawidłowych danych
+     * Tworzy artykuł.
      */
 
-    public function createOrUpdateArticle(array $data, $id = null)
+    public function createArticle(array $data)
     {
-        $lastInsertedId = null;
-
-         // Tworzenie nowego autora, jeśli jest wybrana opcja "new"
+        // Tworzenie nowego autora, jeśli jest wybrana opcja "new"
         if (isset($data['authors']) && $data['authors'][0] == "new") {
             $author = new Author();
             $author->first_name = $data['new_author_first_name'];
@@ -62,46 +57,64 @@ class ArticleService
             $author->save();
             $lastInsertedId = $author->id;
         }
-        //sprawdzenie czy nowo utworzonego autora nie ma już w bazie
-        $existingAuthor = Author::where('first_name', $data['new_author_first_name'])
-                        ->where('last_name', $data['new_author_last_name'])
-                        ->first();
 
-         // Walidacja danych artykułu
-        if ($existingAuthor == null) {
-            $validatedData = validator($data, [
-                'title' => 'required|max:255',
-                'content' => 'required',
-                'authors' => 'required|array',
-            ])->validate();
+        // Walidacja danych artykułu
+        $validatedData = validator($data, [
+            'title' => 'required|max:255',
+            'content' => 'required',
+            'authors' => 'required|array',
+        ])->validate();
 
-            if (empty($validatedData['title'])) {
-                throw new \Exception('Pole tytułu jest wymagane.');
-            }
-
-            if (empty($validatedData['content'])) {
-                throw new \Exception('Pole treści jest wymagane.');
-            }
-            // Utworzenie lub aktualizacja artykułu
-            $article = $this->article->findOrNew($id);
-            $article->title = $validatedData['title'];
-            $article->content = $validatedData['content'];
-            $article->save();
-            // Przypisanie autorów do artykułu
-            if ($lastInsertedId == null) {
-                if (isset($data['authors'])) {
-                    $article->authors()->sync($data['authors']);
-                }
-            }
-
-            if (isset($lastInsertedId)) {
-                // Dodanie powiązania artykułu z nowym autorem
-                DB::table('article_author')->insert([
-                    'article_id' => $article->id,
-                    'author_id' => $lastInsertedId
-                ]);
-            }
+        if (empty($validatedData['title'])) {
+            throw new \Exception('Pole tytułu jest wymagane.');
         }
+
+        if (empty($validatedData['content'])) {
+            throw new \Exception('Pole treści jest wymagane.');
+        }
+        // Utworzenie artykułu
+        $article = new Article();
+        $article->title = $validatedData['title'];
+        $article->content = $validatedData['content'];
+        $article->save();
+        // Przypisanie autorów do artykułu
+        if (isset($lastInsertedId)) {
+            // Dodanie powiązania artykułu z nowym autorem
+            DB::table('article_author')->insert([
+                'article_id' => $article->id,
+                'author_id' => $lastInsertedId
+            ]);
+        }
+    }
+
+    //aktualizuje artykuły
+    public function updateArticle(array $data, $id)
+    {
+        // Walidacja danych artykułu
+        $validatedData = validator($data, [
+            'title' => 'nullable',
+            'content' => 'nullable', 
+        ])->validate();
+
+        if (empty($validatedData['title'])) {
+            return ['error' => 'Pole tytułu jest wymagane.'];
+        }
+
+        if (empty($validatedData['content'])) {
+            return ['error' => 'Pole treści jest wymagane.'];
+        }
+        // Aktualizacja artykułu
+        $article = Article::findOrFail($id);        
+        $article->title = $validatedData['title'];
+        $article->content = $validatedData['content'];
+        $article->save();
+        // Przypisanie autorów do artykułu
+        if (isset($data['authors'])) {
+            $article->authors()->sync($data['authors']);
+        }
+
+        // Zwrócenie sukcesu
+        return ['success' => 'Artykuł został zaktualizowany.'];
     }
 
     /**

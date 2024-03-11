@@ -63,39 +63,44 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {   
-
-
-        //inicjacja zmiennej $exisitngAuthor z wartością null
+        // Inicjacja zmiennej $existingAuthor z wartością null
         $existingAuthor = null;
-        //Sprawdzanie dla nowego autora czy nie ma go już w bazie
+
+        // Sprawdzanie dla nowego autora czy nie ma go już w bazie
         if(isset($request->authors[0]))
         {
             $existingAuthor = Author::where('first_name', $request->new_author_first_name)
                                     ->where('last_name', $request->new_author_last_name)
                                     ->first();
         }
-        //Wyświetlenie komunikatu, że autor jest już w bazie
+
+        // Wyświetlenie komunikatu, że autor jest już w bazie
         if ($existingAuthor != null) {
             return redirect()->route('articles.create')->with('error', 'Autor o podanej kombinacji imienia i nazwiska już istnieje.');
         }
         
-        $this->articleService->createOrUpdateArticle($request->all());
-        //Wyświetlenie komunikatu o sukcesie
-        return redirect()->route('articles.index')->with('success', 'Article created successfully.');
+        // Wywołanie metody createArticle z ArticleService
+        $this->articleService->createArticle($request->all());
+        
+        // Wyświetlenie komunikatu o sukcesie
+        return redirect()->route('articles.index')->with('success', 'Artykuł utworzony z sukcesem.');
+    }
+    //Aktualizac danych w bazie
+    public function update(Request $request, $id)
+    {
+        $result = $this->articleService->updateArticle($request->all(), $id);
 
+        if (isset($result['error'])) {
+            return redirect()->back()->with('error', $result['error']);
+        }
+
+        return redirect()->route('articles.index')->with('success', $result['success']);
     }
     //Edycja artykułu
     public function edit($id)
     {
         $article = $this->articleService->getArticle($id);
         return view('articles.edit', compact('article'));
-    }
-    //Aktualizac danych w bazie
-    public function update(Request $request, $id)
-    {
-        $this->articleService->createOrUpdateArticle($request->all(), $id);
-
-        return redirect()->route('articles.index')->with('success', 'Changes have been saved.');
     }
     //Endpoint API
     public function getArticlesByAuthor($authorId)
