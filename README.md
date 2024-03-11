@@ -75,7 +75,7 @@ http://localhost/information_article_system/public/article/{id}
 
 9. W kontrolerach ArticleController i AuthorController zastosowano wzorzec projektowy Dependency Injection 
 
-10. Pola formularzy są walidowane na wypadku braku wypełnienia, któregoś z nich. 
+10. Pola formularzy są walidowane na wypadek braku wypełnienia, któregoś z nich. 
 
 ## Kontakt
 W przypadku jakichkolwiek pytań lub problemów, skontaktuj się ze mną pod adresem piotrswitlicki2@gmail.com
