@@ -21,9 +21,9 @@
             @foreach($articles as $article)
               
                     <div class="card-body">
-                        <h5 class="card-title">{{ $article->title }}</h5>
+                        <h3 class="card-title">{{ $article->title }}</h3>
                         <p class="card-text">{{ Str::limit($article->content, 100) }}</p>
-                        <h3>Authors:</h3>
+                        <h6>Authors:</h6>
                         <ul>
                             @foreach ($article->authors as $author)
                                 <li>{{ $author->first_name }} {{ $author->last_name }} <br> <div style="font-size: 12"> Author ID: {{ $author->id }} </div></li>
