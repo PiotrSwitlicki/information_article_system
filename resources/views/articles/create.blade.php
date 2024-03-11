@@ -11,6 +11,11 @@
                             @csrf
 
                             <div class="form-group">
+                                @if(session('error'))
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
                             
                                 <label for="title">Tytuł:</label>
                                 <input type="text" class="form-control" id="title" name="title">

@@ -8,6 +8,16 @@
         <div class="col-md-8 offset-md-2">
             <h1>Wszystkie artykuły</h1>
 <!--            <a href="{{ route('articles.create') }}" class="btn btn-primary mb-3">Create Article</a> -->
+            @if(session('success'))
+                <div class="alert alert-success" role="alert">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="alert alert-danger" role="alert">
+                    {{ session('error') }}
+                </div>
+            @endif
             @foreach($articles as $article)
               
                     <div class="card-body">

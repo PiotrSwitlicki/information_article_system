@@ -62,11 +62,27 @@ class ArticleController extends Controller
      * @return \Illuminate\Http\RedirectResponse Przekierowanie na stronę główną z wiadomością o sukcesie
      */
     public function store(Request $request)
-    {
-        // Utworzenie artykułu za pomocą ArticleService
-        $this->articleService->createOrUpdateArticle($request->all());
+    {   
 
+
+        //inicjacja zmiennej $exisitngAuthor z wartością null
+        $existingAuthor = null;
+        //Sprawdzanie dla nowego autora czy nie ma go już w bazie
+        if(isset($request->authors[0]))
+        {
+            $existingAuthor = Author::where('first_name', $request->new_author_first_name)
+                                    ->where('last_name', $request->new_author_last_name)
+                                    ->first();
+        }
+        //Wyświetlenie komunikatu, że autor jest już w bazie
+        if ($existingAuthor != null) {
+            return redirect()->route('articles.create')->with('error', 'Autor o podanej kombinacji imienia i nazwiska już istnieje.');
+        }
+        
+        $this->articleService->createOrUpdateArticle($request->all());
+        //Wyświetlenie komunikatu o sukcesie
         return redirect()->route('articles.index')->with('success', 'Article created successfully.');
+
     }
     //Edycja artykułu
     public function edit($id)
