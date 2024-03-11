@@ -3,125 +3,106 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\ArticleService; // Importowanie zależności ArticleService
 use App\Models\Article;
 use App\Models\Author;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class ArticleController extends Controller
 {
-    protected $article;
-    protected $author;
+    protected $articleService;   // Wstrzykiwanie zależności dla ArticleService
 
-    public function __construct(Article $article, Author $author)
+    /**
+     * Konstruktor wstrzykujący ArticleService do kontrolera
+     *
+     * @param ArticleService $articleService Instancja ArticleService
+     */
+
+    public function __construct(ArticleService $articleService)
     {
-        $this->article = $article;
-        $this->author = $author;
+        $this->articleService = $articleService;
     }
+
+    /**
+     * Wyświetlanie listy artykułów.
+     *
+     * @return \Illuminate\View\View Widok artykułów
+     */
 
     public function index()
     {
-        $articles = $this->article->with('authors')->get();
+        // Pobranie wszystkich artykułów wraz z autorami za pomocą ArticleService
+        $articles = $this->articleService->getAllArticlesWithAuthors(); 
         return view('articles', compact('articles'));
     }
+
+    /**
+     * Wyświetlanie określonego artykułu.
+     *
+     * @param  int  $id ID artykułu
+     * @return \Illuminate\View\View Widok szczegółowy artykułu
+     */
     
-    public function show(Article $article)
+    public function show($id)
     {
+        // Pobranie artykułu po ID za pomocą ArticleService
+        $article = $this->articleService->getArticleById($id);
         return view('articles.show', compact('article'));
     }
-
+    /**
+     * Wyświetlanie formularza tworzenia nowego artykułu.
+     *
+     * @return \Illuminate\View\View Widok formularza tworzenia artykułu
+     */
     public function create()
     {
-        $authors = $this->author->all();
+        // Pobranie wszystkich autorów dla formularza tworzenia artykułu
+        $authors = $this->articleService->getAllAuthors();
         return view('articles.create', ['authors' => $authors]);
     }
-
+    /**
+     * Zapis nowego artykułu do bazy danych.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse Przekierowanie na stronę główną z wiadomością o sukcesie
+     */
     public function store(Request $request)
     {
-        $lastInsertedId = null;
-
-        if ($request->has('authors') && $request->authors[0] == "new") {
-            $author = new Author();
-            $author->first_name = $request->new_author_first_name;
-            $author->last_name = $request->new_author_last_name;
-            $author->save();
-            $lastInsertedId = $author->id;
-        }
-
-        $validatedData = $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required',
-            'authors' => 'required|array',
-        ]);
-
-        if (empty($validatedData['title'])) {
-            return redirect()->back()->withErrors(['title' => 'Pole tytułu jest wymagane.'])->withInput();
-        }
-
-        if (empty($validatedData['content'])) {
-            return redirect()->back()->withErrors(['content' => 'Pole treści jest wymagane.'])->withInput();
-        }
-
-        $article = new Article();
-        $article->title = $validatedData['title'];
-        $article->content = $validatedData['content'];
-        $article->save();
-
-        if ($lastInsertedId == null) {
-            if ($request->has('authors')) {
-                $article->authors()->attach($request->input('authors'));
-            }
-        }
-
-        if (isset($lastInsertedId)) {
-            DB::table('article_author')->insert([
-                'article_id' => $article->id,
-                'author_id' => $lastInsertedId
-            ]);            
-        }
+        // Utworzenie artykułu za pomocą ArticleService
+        $this->articleService->createOrUpdateArticle($request->all());
 
         return redirect()->route('articles.index')->with('success', 'Article created successfully.');
     }
-    public function edit(Article $article)
+    //Edycja artykułu
+    public function edit($id)
     {
+        $article = $this->articleService->getArticleById($id);
         return view('articles.edit', compact('article'));
     }
-
+    //Aktualizac danych w bazie
     public function update(Request $request, $id)
     {
-        $article = $this->article->findOrFail($id);
-        $article->title = $request->input('title');
-        $article->content = $request->input('content');
-        $article->save();
+        $this->articleService->createOrUpdateArticle($request->all(), $id);
 
         return redirect()->route('articles.index')->with('success', 'Changes have been saved.');
     }
-
-    public function getArticle($id)
-    {
-        $article = $this->article->findOrFail($id);
-        return response()->json($article);
-    }
-
+    //Endpoint API
     public function getArticlesByAuthor($authorId)
     {
-        $articles = $this->article->whereHas('authors', function ($query) use ($authorId) {
-            $query->where('authors.id', $authorId);
-        })->get();
+        $articles = $this->articleService->getArticlesByAuthor($authorId);
         return response()->json($articles);
     }
-
+    //Endpoint API
     public function getTopAuthorsLastWeek()
     {
-        $topAuthors = $this->author->withCount('articles')
-            ->whereHas('articles', function ($query) {
-                $query->whereBetween('articles.created_at', [now()->startOfWeek(), now()]);
-            })
-            ->orderByDesc('articles_count')
-            ->limit(3)
-            ->get();
-
+        $topAuthors = $this->articleService->getTopAuthorsLastWeek();
         return response()->json($topAuthors);
+    }
+    //Endpoint API 
+    public function getArticle($id)
+    {
+        $article = $this->articleService->getArticle($id);
+        return response()->json($article);
     }
 
 }

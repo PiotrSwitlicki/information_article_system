@@ -16,10 +16,11 @@
                         <h3>Authors:</h3>
                         <ul>
                             @foreach ($article->authors as $author)
-                                <li>{{ $author->first_name }} {{ $author->last_name }}</li>
+                                <li>{{ $author->first_name }} {{ $author->last_name }} <br> <div style="font-size: 12"> Author ID: {{ $author->id }} </div></li>
                             @endforeach
                         </ul>
                         <p class="card-text">Created at: {{ $article->created_at }}</p>
+                        <p style="font-size: 12" class="card-text">Article ID: {{ $article->id }}</p>
                         <a href="{{ route('articles.show', $article) }}" class="btn btn-primary">Read More</a>
                         <a href="{{ route('articles.edit', $article) }}" class="btn btn-warning">Edit</a>
                     </div>

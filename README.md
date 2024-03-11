@@ -73,9 +73,11 @@ http://localhost/information_article_system/public/article/{id}
     ```
 8. Routingi w aplikacji zostały podzielone na dwie grupy. 
 
-9. W kontrolerach ArticleController i AuthorController zastosowano wzorzec projektowy Dependency Injection 
+9. W kontrolerze ArticleController zastosowano wzorzec projektowy Dependency Injection i Service Layer, a w AuthorController Dependency Injection. 
 
 10. Pola formularzy są walidowane na wypadek braku wypełnienia, któregoś z nich. 
+
+11. Na stronie głównej, na liście artykułów zamieszczono dodatkwo informacje o ID autorów i postów w bazie, co jest przeznaczone dla deweloperów, którzy korzystają z API. 
 
 ## Kontakt
 W przypadku jakichkolwiek pytań lub problemów, skontaktuj się ze mną pod adresem piotrswitlicki2@gmail.com
