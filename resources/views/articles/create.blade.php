@@ -6,7 +6,7 @@
             <div class="col-md-8">
                 <div class="card1">
                     <div class="card-body">
-                        <div class="carda-header">Dodaj artykuł</div><br>
+                        <div class="carda-header"><h1>Dodaj artykuł</h1></div><br>
                         <form method="POST" action="{{ route('articles.store') }}">
                             @csrf
 

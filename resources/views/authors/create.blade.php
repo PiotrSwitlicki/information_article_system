@@ -11,7 +11,7 @@
                             @csrf
 
                             <div class="form-group">
-                                <div class="carda-header">Dodaj nowego autora</div>
+                                <div class="carda-header"><h1>Dodaj nowego autora</h1></div>
                                 <br>
                                 @if(session('success'))
                                     <div class="alert alert-success" role="alert">
