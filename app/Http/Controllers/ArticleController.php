@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\ArticleService; // Importowanie zależności ArticleService
+use App\Services\ArticleService; 
 use App\Models\Article;
 use App\Models\Author;
 use Illuminate\View\View;
 
 class ArticleController extends Controller
 {
-    protected $articleService;   // Wstrzykiwanie zależności dla ArticleService
+    protected $articleService;   
 
     /**
      * Konstruktor wstrzykujący ArticleService do kontrolera
